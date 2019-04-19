@@ -96,16 +96,11 @@ export default {
       drawer: false,
       fixed: false,
       items: [
-        {
-          icon: 'apps',
-          title: 'Welcome',
-          to: '/'
-        },
-        {
-          icon: 'bubble_chart',
-          title: 'Inspire',
-          to: '/inspire'
-        }
+        { icon: 'apps', title: 'Welcome', to: '/' },
+        { icon: 'bubble_chart', title: 'Inspire', to: '/inspire' },
+        { title: 'Chat Index', to: '/chat/', icon: 'chat' },
+        { title: 'Chat Group', to: '/chat/group', icon: 'group' },
+        { title: 'Chat Secret', to: '/chat/secret', icon: 'person_outline' }
       ],
       miniVariant: false,
       right: true,

@@ -34,7 +34,7 @@ npm i socket.io
 ## *branch day2.1*
 chat_vuetify
 - add chat menus
-- default chat pages (chat/index, chat/all, chat/secret)
+- default chat pages (chat/index, chat/group, chat/secret)
 
 chat_express
 - change bin/www and app.js for socket.io

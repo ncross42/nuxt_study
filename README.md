@@ -3,7 +3,7 @@ nuxt, vuetify study contents
 
 # Prerequisites
 ```sh
-npm i -g nodemon increase-memory-limit
+npm i -g express nodemon increase-memory-limit
 ```
 
 # DAY1 (self_chat)
@@ -27,7 +27,7 @@ increase-memory-limit
 chat_express (socket.io-client)
 ```sh
 express -e chat_express
-cd chat_express
+cd chat_express; npm i;
 npm i socket.io
 ```
 

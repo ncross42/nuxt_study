@@ -20,11 +20,14 @@ chat_express : ` cd chat_express; npm i; nodemon; `
 chat_vuetify (vuetify, axios, none-server)
 ```sh
 npx create-nuxt-app chat_vuetify
+cd chat_vuetify
 npm i socket.io-client
+increase-memory-limit
 ```
 chat_express (socket.io-client)
 ```sh
 express -e chat_express
+cd chat_express
 npm i socket.io
 ```
 

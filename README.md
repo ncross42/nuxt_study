@@ -38,11 +38,13 @@ chat_vuetify
 
 chat_express
 - change bin/www and app.js for socket.io
-- refactoring router, sockets
 
 ## *branch day2.2*
 chat_express
 - refactoring router, sockets
+
+## *branch day2.3*
+chat_express
 - serve open-chat
 
 chat_vuetify

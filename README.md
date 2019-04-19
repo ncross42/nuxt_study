@@ -39,5 +39,3 @@ chat_vuetify
 chat_express
 - change bin/www and app.js for socket.io
 - refactoring router, sockets
-
-   

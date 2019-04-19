@@ -3,7 +3,7 @@ nuxt, vuetify study contents
 
 # Prerequisites
 ```sh
-npm i -g nodemon increase-memory-limit
+npm i -g express nodemon increase-memory-limit
 ```
 
 # DAY1 (self_chat)
@@ -20,21 +20,30 @@ chat_express : ` cd chat_express; npm i; nodemon; `
 chat_vuetify (vuetify, axios, none-server)
 ```sh
 npx create-nuxt-app chat_vuetify
+cd chat_vuetify
 npm i socket.io-client
+increase-memory-limit
 ```
 chat_express (socket.io-client)
 ```sh
 express -e chat_express
+cd chat_express; npm i;
 npm i socket.io
 ```
 
 ## *branch day2.1*
 chat_vuetify
 - add chat menus
-- default chat pages (chat/index, chat/all, chat/secret)
+- default chat pages (chat/index, chat/group, chat/secret)
 
 chat_express
 - change bin/www and app.js for socket.io
 - refactoring router, sockets
 
-   
+## *branch day2.2*
+chat_express
+- refactoring router, sockets
+- serve open-chat
+
+chat_vuetify
+- chat/index : dev open-chat 

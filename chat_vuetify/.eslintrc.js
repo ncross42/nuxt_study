@@ -13,6 +13,8 @@ module.exports = {
   ],
   // add your custom rules here
   rules: {
-    "object-property-newline": 0
+    "object-property-newline": 0,
+    'vue/singleline-html-element-content-newline': 0,
+    'no-console' : "off",
   }
 }

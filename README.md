@@ -3,12 +3,14 @@ nuxt, vuetify study contents
 
 # Prerequisites
 ```sh
-npm i -g nodemon
+npm i -g nodemon increase-memory-limit
 ```
 
 # DAY1 (self_chat)
 NO BRANCH
-> cd self_chat; npm i; npm run dev;
+```sh
+cd self_chat; npm i; npm run dev;
+```
 
 # DAY2 ( chat_vuetify, chat_express )
 chat_vuetify : ` cd chat_vuetify; npm i; npm run dev; `
@@ -28,7 +30,7 @@ npm i socket.io
 
 ## *branch day2.1*
 chat_vuetify
-- make LeftMenuBar
+- add chat menus
 - default chat pages (chat/index, chat/all, chat/secret)
 
 chat_express

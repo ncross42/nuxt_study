@@ -5,7 +5,7 @@ var mapNameId = {}
 var mapIdName = {}
 
 module.exports = function(io){
-  io.of('/group').on('connection', group)
+  io.of('/group').on('connection', group(io))
   io.of('/secret').on('connection', secret(io))
 
   io.on('connection', function(socket){

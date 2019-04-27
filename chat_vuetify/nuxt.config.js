@@ -45,7 +45,9 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '@/plugins/vuetify'
+    '@/plugins/vuetify',
+    { src: '@/plugins/sockets', ssr: false }
+    // { src: '@/plugins/socket.io', ssr: false }
   ],
 
   /*

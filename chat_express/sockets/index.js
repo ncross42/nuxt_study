@@ -1,7 +1,13 @@
+const group = require('./group');
+const secret = require('./secret');
+
 var mapNameId = {}
 var mapIdName = {}
 
 module.exports = function(io){
+  io.of('/group').on('connection', group)
+  io.of('/secret').on('connection', secret(io))
+
   io.on('connection', function(socket){
     console.log("global connection", socket.id)
     socket.on('echo', function(msg){
@@ -9,22 +15,22 @@ module.exports = function(io){
     });
     socket.on('enter', (name) => {
       const id = socket.id
-      if (mapNameId.hasOwnProperty(name)) {
-        const ret = `already user_name : ${name}`
+      if (mapIdName.hasOwnProperty(id)) {
+        const ret = { code: 1, name: mapIdName[id], message: `already socket_id : ${id}` }
         socket.emit('enter', ret)
         console.log(ret)
-      } else if (mapIdName.hasOwnProperty(id)) {
-        const ret = `already user_id : ${id}`
+      } else if (mapNameId.hasOwnProperty(name)) {
+        const ret = { code: 2, message: `already user_name : ${name}` }
         socket.emit('enter', ret)
         console.log(ret)
       } else {
         mapNameId[name] = id
         mapIdName[id] = name
-        socket.emit('enter', false)
         console.log(`new user(${name}) : ${id}`)
-        const ret = `[${new Date().format('HH:mm:ss')}] '${name}' 님이 입장하였습니다.`
-        socket.emit('sendAll', ret)
-        socket.broadcast.emit('sendAll', ret)
+        const msg = `[${new Date().format('HH:mm:ss')}] '${name}' 님이 입장하였습니다.`
+        const ret = { code: 0, name, message: msg }
+        socket.emit('enter', ret)
+        socket.broadcast.emit('sendAll', msg)
       }
     })
     socket.on('sendAll', (msg) => {

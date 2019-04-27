@@ -28,11 +28,11 @@
         <v-card>
           <v-list>
             <template v-for="(msg,i) in arrMsg">
-              <v-list-item :key="i">
-                <v-list-item-content>
-                  <v-list-item-title class="body-1" v-text="msg" />
-                </v-list-item-content>
-              </v-list-item>
+              <v-list-tile :key="i">
+                <v-list-tile-content>
+                  <v-list-tile-title class="body-1" v-text="msg" />
+                </v-list-tile-content>
+              </v-list-tile>
               <v-divider v-if="i + 1 < arrMsg.length" :key="`divider-${i}`" />
             </template>
           </v-list>
@@ -43,9 +43,7 @@
 </template>
 
 <script>
-import io from 'socket.io-client'
-const socket = io('http://localhost:3000')
-
+// import { socketOpen as socket } from '~/plugins/socket.io.js'
 export default {
   data: () => ({
     username: '',
@@ -54,33 +52,34 @@ export default {
     arrMsg: []
   }),
   beforeMount() {
-    socket.on('sendAll', (result) => {
-      if (result) {
-        this.arrMsg.push(result)
+    this.$sockOpen.on('sendAll', (ret) => {
+      if (ret) {
+        this.arrMsg.push(ret)
       } else {
         alert('응답이 없습니다.')
       }
     })
-    socket.on('enter', (result) => {
-      if (result) {
-        alert(result)
+    this.$sockOpen.on('enter', (ret) => {
+      if (ret.code === 2) {
+        alert(ret.message)
         this.username = ''
       } else {
         this.login = true
+        this.username = ret.name
       }
     })
   },
   methods: {
     sendAll(event) {
       if (this.msg) {
-        socket.emit('sendAll', this.msg)
+        this.$sockOpen.emit('sendAll', this.msg)
       } else {
         alert('메시지가 없습니다.')
       }
     },
     enter(event) {
       if (this.username) {
-        socket.emit('enter', this.username)
+        this.$sockOpen.emit('enter', this.username)
       } else {
         alert('이름이 비었습니다.')
       }

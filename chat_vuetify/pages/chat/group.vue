@@ -1,7 +1,10 @@
 <template>
   <v-container grid-list-xl text-xs-center>
     <v-layout align-center row wrap>
-      <v-flex xs10 class="display-1">그룹방</v-flex>
+      <v-flex xs2>
+        <dialog-group :group-name="group" />
+      </v-flex>
+      <v-flex xs8 class="display-1">그룹방</v-flex>
       <v-flex xs2>
         <v-btn color="info" @click="echo">에코</v-btn>
       </v-flex>
@@ -38,7 +41,10 @@
 
 <script>
 // import socket from '~/plugins/socket.group.js'
+import DialogGroup from '../../components/DialogGroup'
+
 export default {
+  components: { DialogGroup },
   data: () => ({
     group: '',
     msg: '',
@@ -66,6 +72,7 @@ export default {
   },
   methods: {
     sendGroup(event) {
+      console.log(this.group, this.msg)
       if (this.group && this.msg) {
         const req = { group: this.group, msg: this.msg }
         this.$sockGroup.emit('sendGroup', req)

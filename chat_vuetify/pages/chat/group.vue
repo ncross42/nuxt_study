@@ -48,27 +48,30 @@ export default {
   data: () => ({
     group: '',
     msg: '',
-    arrMsg: []
+    arrMsg: [],
+    callBacks: {}
   }),
   beforeMount() {
-    this.$sockGroup.on('sendGroup', (result) => {
+    this.callBacks.sendGroup = (result) => {
       if (result) {
         this.arrMsg.push(result)
       } else {
         alert('응답이 없습니다.')
       }
-    })
-    this.$sockGroup.on('echo', (ret) => {
+    }
+    this.callBacks.echo = (ret) => {
       console.log(ret)
-    })
-    // this.$sockGroup.on('enter', (result) => {
-    //   if (result) {
-    //     alert(result)
-    //     this.username = ''
-    //   } else {
-    //     this.login = true
-    //   }
-    // })
+    }
+    this.$sockGroup.on('sendGroup', this.callBacks.sendGroup)
+    this.$sockGroup.on('echo', this.callBacks.echo)
+  },
+  beforeDestroy() {
+    if (this.callBacks.sendGroup) {
+      this.$sockGroup.off('sendGroup', this.callBacks.sendGroup)
+    }
+    if (this.callBacks.echo) {
+      this.$sockGroup.off('echo', this.callBacks.echo)
+    }
   },
   methods: {
     sendGroup(event) {
@@ -83,13 +86,6 @@ export default {
     echo(e) {
       this.$sockGroup.emit('echo', this.group)
     }
-    // enter(event) {
-    //   if (this.username) {
-    //     sockGroup.emit('enter', this.username)
-    //   } else {
-    //     alert('이름이 비었습니다.')
-    //   }
-    // }
   }
 }
 </script>

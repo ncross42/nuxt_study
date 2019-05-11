@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const fileUpload = require('../utils/fileUpload')
+const db = require('../db.mysql')
+
 
 router.get('/', (req, res, next) => {
   res.send('/clothes');
@@ -15,22 +17,23 @@ router.post('/', fileUpload.single('imgFile'), function(req, res, next) {
 router.post('/registry', fileUpload.single('imgFile'), async (req, res) => {
   // console.log(req.body)
   res.json({message:'ok'});
-  return
 
   let {name, price, category, imageName} = req.body
   sql = `INSERT INTO clothe (name, price, category, img)
     VALUES ('${name}', ${price}, '${category}', '${imageName}')
   `
   console.log(sql)
-  const cnx = await db.connection()
-  const [rows,fields] = await cnx.execute(sql)
-  console.log(fields)
-  console.log(rows)
+  await db.execute(sql);
+  // console.log(sql)
+  // const cnx = await db.connection()
+  // const [rows,fields] = await cnx.execute(sql)
+  // console.log(fields)
+  // console.log(rows)
   // rows.forEach(r => {
   //   console.log(r)
   // });
   
-  cnx.release();
+  // cnx.release();
   res.send('/clothes/registry');
 });
 

@@ -9,7 +9,7 @@ module.exports = {
   
   server: {
     port: 8000, // default: 3000
-    host: '0.0.0.0', // default: localhost
+    // host: '0.0.0.0', // default: localhost
   },
   
   /*
@@ -48,6 +48,7 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    '@/plugins/vuelidate',
     '@/plugins/vuetify'
   ],
 

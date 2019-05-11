@@ -87,12 +87,9 @@
 </template>
 
 <script>
-import { validationMixin } from 'vuelidate'
 import { required, maxLength, between } from 'vuelidate/lib/validators'
 
 export default {
-  mixins: [validationMixin],
-
   validations: {
     name: { required, maxLength: maxLength(10) },
     price: { required, between: between(1000, 123456) },

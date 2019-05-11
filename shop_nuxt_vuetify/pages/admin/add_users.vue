@@ -1,5 +1,14 @@
 <template>
   <form @submit.prevent="submit" action="/api1/admin/clothes/registry" method="post">
+    <v-select
+      v-model="role"
+      :items="roles"
+      :error-messages="roleErrors"
+      @change="$v.role.$touch()"
+      @blur="$v.role.$touch()"
+      label="Role"
+      required
+    />
     <v-text-field
       v-model="name"
       :error-messages="nameErrors"
@@ -10,6 +19,15 @@
       required
     />
     <v-text-field
+      v-model="pass"
+      :error-messages="passErrors"
+      @input="$v.pass.$touch()"
+      @blur="$v.pass.$touch()"
+      type="password"
+      label="Password"
+      required
+    />
+    <v-text-field
       v-model="email"
       :error-messages="emailErrors"
       @input="$v.email.$touch()"
@@ -17,13 +35,12 @@
       label="E-mail"
       required
     />
-    <v-select
-      v-model="select"
-      :items="items"
-      :error-messages="selectErrors"
-      @change="$v.select.$touch()"
-      @blur="$v.select.$touch()"
-      label="Item"
+    <v-text-field
+      v-model="balance"
+      :error-messages="balanceErrors"
+      @input="$v.balance.$touch()"
+      @blur="$v.balance.$touch()"
+      label="Balance"
       required
     />
     <v-checkbox
@@ -45,34 +62,45 @@
 </template>
 
 <script>
-import { validationMixin } from 'vuelidate'
-import { required, maxLength, email } from 'vuelidate/lib/validators'
+import { required, minLength, maxLength, email, between, numeric } from 'vuelidate/lib/validators'
 
 export default {
-  mixins: [validationMixin],
+  data: () => ({
+    name: '',
+    role: null,
+    email: '',
+    pass: '',
+    balance: 0,
+    roles: [
+      'admin',
+      'customer',
+    ],
+    checkbox: false,
+    submitStatus: null
+  }),
 
   validations: {
-    name: { required, maxLength: maxLength(10) },
+    role: { required },
+    name: { required, minLength: minLength(2), maxLength: maxLength(10) },
+    pass: {
+      required,
+      minLength: minLength(4),
+      strongPassword(pass) {
+        return (
+          /[a-z]/.test(pass) && // checks for a-z
+          /[0-9]/.test(pass) && // checks for 0-9
+          /\W|_/.test(pass) // checks for special char
+        )
+      }
+    },
     email: { required, email },
-    select: { required },
+    balance: { required, numeric, between: between(1000, 100000) },
     checkbox: {
       checked(val) {
         return val
       }
     }
   },
-
-  data: () => ({
-    name: '',
-    email: '',
-    select: null,
-    items: [
-      '상의',
-      '하의',
-    ],
-    checkbox: false,
-    submitStatus: null
-  }),
 
   computed: {
     checkboxErrors() {
@@ -81,30 +109,47 @@ export default {
       !this.$v.checkbox.checked && errors.push('You must agree to continue!')
       return errors
     },
-    selectErrors() {
+    roleErrors() {
       const errors = []
-      if (!this.$v.select.$dirty) return errors
-      !this.$v.select.required && errors.push('Item is required')
+      if (!this.$v.role.$dirty) return errors
+      !this.$v.role.required && errors.push('Item is required')
       return errors
     },
     nameErrors() {
       const errors = []
       if (!this.$v.name.$dirty) return errors
-      !this.$v.name.maxLength && errors.push('Name must be at most 10 characters long')
       !this.$v.name.required && errors.push('Name is required.')
+      !this.$v.name.minLength && errors.push('Name must be at least 2 characters long')
+      !this.$v.name.maxLength && errors.push('Name must be at most 10 characters long')
+      return errors
+    },
+    passErrors() {
+      const errors = []
+      if (!this.$v.pass.$dirty) return errors
+      !this.$v.pass.required && errors.push('Password is required.')
+      !this.$v.pass.minLength && errors.push('Password must be at least 4 characters long')
+      !this.$v.pass.strongPassword && errors.push('Strong passwords need to have a letter, a number, a special character')
       return errors
     },
     emailErrors() {
       const errors = []
       if (!this.$v.email.$dirty) return errors
-      !this.$v.email.email && errors.push('Must be valid e-mail')
       !this.$v.email.required && errors.push('E-mail is required')
+      !this.$v.email.email && errors.push('Must be valid e-mail')
       return errors
-    }
+    },
+    balanceErrors() {
+      const errors = []
+      if (!this.$v.balance.$dirty) return errors
+      !this.$v.balance.required && errors.push('Balance is required.')
+      !this.$v.balance.numeric && errors.push('Balance must be number')
+      !this.$v.balance.between && errors.push('Balance must be between 1000 and 100000')
+      return errors
+    },
   },
 
   methods: {
-    submit() {
+    async submit() {
       console.log('submit!')
       this.$v.$touch()
       if (this.$v.$invalid) {
@@ -112,16 +157,34 @@ export default {
       } else {
         // do your submit logic here
         this.submitStatus = 'PENDING'
-        setTimeout(() => {
-          this.submitStatus = 'OK'
-        }, 500)
+        const param = {
+          name: this.name,
+          pass: this.pass,
+          email: this.email,
+          balance: this.balance,
+          role: this.role
+        }
+
+        try {
+          const ret = await this.$axios.$post('/api1/users/registry', param)
+          console.log('ret', ret)
+          if (ret.status === 200 && ret.data.message === 'ok') {
+            this.submitStatus = 'OK'
+            this.clear()
+          } else {
+            this.submitStatus = 'ERROR'
+          }
+        } catch (error) {
+          this.submitStatus = 'ERROR'
+          console.error('axios.error.response.data', error.response.data)
+        }
       }
     },
     clear() {
       this.$v.$reset()
       this.name = ''
       this.email = ''
-      this.select = null
+      this.role = null
       this.checkbox = false
     }
   }

@@ -37,4 +37,19 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+const sqlite = require('sqlite')
+async function main() {
+  const [dbShop, dbTest] = await Promise.all([
+    sqlite.open('./shop.sqlite', { Promise, cached: true }),
+    sqlite.open('./test.sqlite', { Promise }),
+  ])
+  await Promise.all([
+    dbShop.migrate({migrationsPath: './migrations/shop'}),
+    dbTest.migrate({migrationsPath: './migrations/test'})
+  ])
+  app.locals.dbShop = dbShop
+  app.locals.dbTest = dbTest
+}
+main()
+
 module.exports = app;

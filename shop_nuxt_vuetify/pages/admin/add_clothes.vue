@@ -6,7 +6,7 @@
       :counter="10"
       @input="$v.name.$touch()"
       @blur="$v.name.$touch()"
-      label="Name"
+      label="상품명"
       required
     />
     <v-text-field
@@ -14,7 +14,7 @@
       :error-messages="priceErrors"
       @input="$v.price.$touch()"
       @blur="$v.price.$touch()"
-      label="Price"
+      label="가격"
       required
     />
     <v-select
@@ -23,7 +23,15 @@
       :error-messages="categoryErrors"
       @change="$v.category.$touch()"
       @blur="$v.category.$touch()"
-      label="Category"
+      label="품목"
+      required
+    />
+    <v-text-field
+      v-model="stock"
+      :error-messages="stockErrors"
+      @input="$v.stock.$touch()"
+      @blur="$v.stock.$touch()"
+      label="재고"
       required
     />
 
@@ -94,6 +102,7 @@ export default {
     name: { required, maxLength: maxLength(10) },
     price: { required, between: between(1000, 123456) },
     category: { required },
+    stock: { required, between: between(1, 999) },
     imgName: { required },
     agreement: {
       checked(val) {
@@ -106,6 +115,7 @@ export default {
     name: '',
     price: 1000,
     category: null,
+    stock: 10,
     items: [
       'top',
       'pants',
@@ -145,6 +155,13 @@ export default {
       if (!this.$v.price.$dirty) return errors
       !this.$v.price.between && errors.push('Must be valid Range (1000 ~ 123456)')
       !this.$v.price.required && errors.push('Price is required')
+      return errors
+    },
+    stockErrors() {
+      const errors = []
+      if (!this.$v.stock.$dirty) return errors
+      !this.$v.stock.between && errors.push('Must be valid Range (1 ~ 999)')
+      !this.$v.stock.required && errors.push('Stock is required')
       return errors
     },
     imageErrors() {
@@ -192,19 +209,22 @@ export default {
         form.append('name', this.name)
         form.append('price', this.price)
         form.append('category', this.category)
+        form.append('stock', this.stock)
         form.append('imgFile', new Blob([this.imgFile], { type: this.imgType }), this.imgName)
-        // this.$axios.setHeader('Content-Type', 'multipart/form-data', [ 'post' ])
-        const ret = await this.$axios.post('/api1/clothes/registry', form) //, { headers: { 'Content-Type': 'multipart/form-data' } })
-        console.log(ret)
-        if (ret.status === 200 && ret.data.message === 'ok') {
-          this.submitStatus = 'OK'
-        } else {
+        try {
+          // this.$axios.setHeader('Content-Type', 'multipart/form-data', [ 'post' ])
+          const ret = await this.$axios.post('/api1/clothes/registry', form) //, { headers: { 'Content-Type': 'multipart/form-data' } })
+          console.log('ret', ret)
+          if (ret.status === 200 && ret.data.message === 'ok') {
+            this.submitStatus = 'OK'
+            this.clear()
+          } else {
+            this.submitStatus = 'ERROR'
+          }
+        } catch (error) {
           this.submitStatus = 'ERROR'
+          console.error('axios.error.response.data', error.response.data)
         }
-        // alert('Registry OK')
-        // setTimeout(() => {
-        //   this.submitStatus = 'OK'
-        // }, 500)
       }
     },
     clear() {

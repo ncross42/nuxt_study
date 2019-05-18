@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const db = require('../db.mysql')
+// const db = require('../db.mysql')
 const SQL = require('sql-template-strings')
 const util = require('util')
 
@@ -13,15 +13,14 @@ router.post('/registry', async (req, res, next) => {
     const ret = await db.run(SQL`INSERT INTO users (role, name, pass, email, balance )
       VALUES ( ${role}, ${name}, ${pass}, ${email}, ${balance} )`
     )
+    console.log(ret)
+    res.json({message:'ok'})
   } catch (error) {
     const ret = { code:error.code, errno: error.errno, message: error.message }
     console.log(ret)
     res.status(500).json(ret)
     return
   }
-
-  console.log(ret)
-  res.json({message:'ok'})
 });
 
 /* GET users listing. */
